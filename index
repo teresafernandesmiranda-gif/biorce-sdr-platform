@@ -1,0 +1,1015 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Biorce · SDR Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f3ee;--surface:#fff;--surface2:#f0ede6;--surface3:#e8e4db;
+  --border:#ddd9d0;--border2:#c8c4bb;
+  --text:#1a1917;--text2:#6b6860;--text3:#9c9890;
+  --teal:#0d7a63;--teal-l:#e0f5f0;--teal-m:#1aad8e;--teal-b:#b0e0d8;
+  --amber:#b86a0a;--amber-l:#fef3e2;
+  --red:#c0392b;--red-l:#fdecea;
+  --blue:#1a5c9e;--blue-l:#e8f1fb;
+  --green:#2a7a45;--green-l:#e5f5ec;
+  --purple:#6b3fa0;--purple-l:#f0ebf9;
+  --fd:'DM Serif Display',serif;--fb:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;overflow-x:hidden}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.logo{font-family:var(--fd);font-size:20px;display:flex;align-items:center;gap:10px}
+.logo-dot{width:9px;height:9px;background:var(--teal-m);border-radius:50%}
+.company-pill{background:var(--teal-l);color:var(--teal);border:1px solid var(--teal-b);padding:4px 14px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.company-pill:hover{background:var(--teal-b)}
+.api-btn{font-family:var(--fb);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.api-btn:hover{border-color:var(--teal);color:var(--teal)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--border2)}
+.api-dot.on{background:var(--teal-m)}
+
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;overflow-x:auto;gap:0}
+.ntab{font-family:var(--fb);font-size:13px;color:var(--text3);padding:13px 16px;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.ntab:hover{color:var(--text2)}
+.ntab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:500}
+
+.page{display:none;max-width:1080px;margin:0 auto;padding:2rem}
+.page.active{display:block}
+
+/* SEARCH BAR — top of dynamic pages */
+.search-bar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;flex-direction:column;gap:10px}
+.sb-top{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.sb-input{flex:1;min-width:200px;padding:10px 14px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-family:var(--fb);font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s}
+.sb-input:focus{border-color:var(--teal)}
+.sb-input::placeholder{color:var(--text3)}
+.sb-textarea{width:100%;padding:10px 14px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-family:var(--fb);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color 0.2s;line-height:1.6}
+.sb-textarea:focus{border-color:var(--teal)}
+.sb-textarea::placeholder{color:var(--text3)}
+.sb-toggle{font-size:12px;color:var(--teal);cursor:pointer;background:none;border:none;font-family:var(--fb);padding:0;text-decoration:underline;text-underline-offset:2px}
+.sb-note{font-size:11px;color:var(--text3);line-height:1.5}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.card2{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem}
+.sec{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* METRICS */
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.mv{font-family:var(--fd);font-size:26px;color:var(--text);line-height:1;margin-bottom:3px}
+.mv.g{color:var(--teal)}
+.ml{font-size:11px;color:var(--text3)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 9px;border-radius:100px}
+.bt{background:var(--teal-l);color:var(--teal);border:1px solid var(--teal-b)}
+.ba{background:var(--amber-l);color:var(--amber)}
+.bb{background:var(--blue-l);color:var(--blue)}
+.bg{background:var(--surface3);color:var(--text2)}
+.br{background:var(--red-l);color:var(--red)}
+.bgr{background:var(--green-l);color:var(--green)}
+
+/* BUTTONS */
+.btn{font-family:var(--fb);padding:9px 18px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.btn-t{background:var(--teal);color:#fff}
+.btn-t:hover:not(:disabled){background:var(--teal-m)}
+.btn-o{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-o:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.bsm{padding:5px 12px;font-size:12px;border-radius:7px}
+
+/* PIPELINE */
+.pipe-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.pipe-item:last-child{border-bottom:none}
+.pipe-drug{font-weight:500;font-size:14px;color:var(--text);margin-bottom:2px}
+.pipe-detail{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* NEWS */
+.news-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:14px}
+.news-item:last-child{border-bottom:none}
+.ndate{font-family:var(--fm);font-size:11px;color:var(--text3);min-width:68px;margin-top:2px}
+.ntitle a{color:var(--text);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.15s}
+.ntitle a:hover{color:var(--teal)}
+.nwhy{font-size:11px;color:var(--teal);background:var(--teal-l);padding:3px 9px;border-radius:5px;margin-top:5px;display:inline-block}
+.nsrc{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* PAIN CARDS */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:680px){.pgrid{grid-template-columns:1fr}}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.phead{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.pnum{width:28px;height:28px;border-radius:50%;background:var(--teal-l);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;border:1px solid var(--teal-b)}
+.ptitle{font-size:13px;font-weight:500;color:var(--text);line-height:1.4}
+.pdesc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.paika{font-size:12px;color:var(--teal);background:var(--teal-l);padding:6px 10px;border-radius:7px;border-left:3px solid var(--teal-m)}
+
+/* TRIGGER TIMELINE */
+.tlist{display:flex;flex-direction:column}
+.titem{display:flex;gap:18px;padding:14px 0;position:relative}
+.titem:not(:last-child)::after{content:'';position:absolute;left:16px;top:40px;bottom:0;width:1px;background:var(--border)}
+.tdot{width:32px;height:32px;border-radius:50%;border:2px solid var(--teal);background:var(--teal-l);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;z-index:1}
+.tdate{font-family:var(--fm);font-size:11px;color:var(--teal);margin-bottom:3px}
+.ttitle{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.twhy{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* COMPARISON TABLE */
+.ctable{width:100%;border-collapse:collapse;font-size:12px}
+.ctable th{padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3)}
+.ctable td{padding:11px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+.ctable tr:last-child td{border-bottom:none}
+.ctable .rh{color:var(--text);font-weight:500;font-size:13px}
+.aika-head{background:var(--teal-l)!important;color:var(--teal)!important}
+.aika-col{background:var(--teal-l)}
+.check{color:var(--teal);font-weight:600}
+.cross{color:var(--red)}
+.partial{color:var(--amber)}
+
+/* CALL FLOW */
+.flow-node{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:6px;cursor:pointer;transition:all 0.2s}
+.flow-node:hover{border-color:var(--teal-m)}
+.flow-node.open{border-color:var(--teal);background:var(--teal-l)}
+.fn-label{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.fn-title{font-size:14px;font-weight:500;color:var(--text)}
+.fn-script{font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px;display:none;white-space:pre-wrap}
+.fn-script.show{display:block}
+.flow-arrow{text-align:center;color:var(--text3);font-size:20px;margin:2px 0;line-height:1}
+.bwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+@media(max-width:600px){.bwrap{grid-template-columns:1fr}}
+.byes{border-color:var(--green)!important}
+.byes:hover{background:var(--green-l)!important}
+.bno{border-color:var(--red)!important}
+.bno:hover{background:var(--red-l)!important}
+.blabel{font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:3px}
+.blabel.y{color:var(--green)}
+.blabel.n{color:var(--red)}
+
+/* FEATURE CARDS */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:1.25rem}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal-m)}
+.feat-icon{font-size:26px;margin-bottom:10px}
+.feat-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.feat-val{font-family:var(--fd);font-size:30px;color:var(--teal);line-height:1;margin-bottom:4px}
+.feat-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.vs-bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:11px}
+.vs-label{width:76px;color:var(--text3);text-align:right;flex-shrink:0}
+.bwrp{flex:1;height:7px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.bfill{height:100%;border-radius:4px}
+.b-aika{background:var(--teal-m)}
+.b-old{background:var(--border2)}
+.vs-val{width:38px;font-family:var(--fm);font-size:11px;color:var(--text2)}
+
+/* ROI */
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:680px){.roi-grid{grid-template-columns:1fr}}
+.roi-in{margin-bottom:1rem}
+.roi-lbl{font-size:12px;color:var(--text2);margin-bottom:5px;display:flex;justify-content:space-between}
+.roi-lbl span{color:var(--teal);font-family:var(--fm)}
+input[type=range]{width:100%;accent-color:var(--teal);cursor:pointer}
+.roi-res{background:var(--teal-l);border:1px solid var(--teal-b);border-radius:12px;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.roi-big{font-family:var(--fd);font-size:52px;color:var(--teal);line-height:1;margin-bottom:4px}
+.roi-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.roi-row:last-child{border-bottom:none}
+
+/* LEAD LIST */
+.ll-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ll-item:last-child{border-bottom:none}
+.ll-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:var(--fm);flex-shrink:0}
+.ll-info{flex:1}
+.ll-name{font-size:13px;font-weight:500;color:var(--text)}
+.ll-sub{font-size:12px;color:var(--text3);line-height:1.4;margin-top:1px}
+
+/* CAP PILLS */
+.cap-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.cap-time{min-width:76px;font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:3px}
+.cap-items{display:flex;flex-wrap:wrap;gap:6px}
+.cpill{font-size:11px;padding:3px 10px;border-radius:100px;border:1px solid var(--border2);color:var(--text3)}
+.cpill.now{border-color:var(--teal-b);color:var(--teal);background:var(--teal-l)}
+.cpill.soon{color:var(--amber);background:var(--amber-l);border-color:#f5d5a0}
+.cpill.later{color:var(--text3)}
+
+/* SCRIPT GEN */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:2.5rem;text-align:center;cursor:pointer;transition:all 0.15s}
+.upload-zone:hover,.upload-zone.drag{background:var(--teal-l);border-color:var(--teal)}
+.uicon{width:48px;height:48px;background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:22px}
+.chip{font-size:11px;padding:3px 10px;border-radius:100px;background:var(--surface2);color:var(--text3);border:1px solid var(--border);font-family:var(--fm)}
+.ltable{width:100%;border-collapse:collapse;font-size:13px}
+.ltable th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3)}
+.ltable td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+.ltable tr:last-child td{border-bottom:none}
+.bp{background:var(--surface2);color:var(--text3)}
+.bs2{background:var(--blue-l);color:var(--blue)}
+.bd{background:var(--green-l);color:var(--green)}
+.be{background:var(--red-l);color:var(--red)}
+.prog-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:0.75rem}
+.prog-fill{height:100%;background:var(--teal-m);border-radius:2px;transition:width 0.4s}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1rem}
+.sc-head{display:flex;align-items:center;gap:12px;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)}
+.savtr{width:38px;height:38px;border-radius:50%;background:var(--blue-l);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:var(--fm)}
+.sc-body{padding:1.5rem;font-size:13px;line-height:1.8;white-space:pre-wrap;color:var(--text2);background:var(--surface2)}
+.sc-foot{padding:0.75rem 1.5rem;display:flex;justify-content:flex-end;border-top:1px solid var(--border)}
+
+/* INNER TABS */
+.itabs{display:flex;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap}
+.itab{font-family:var(--fb);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s}
+.itab:hover{color:var(--text2)}
+.itab.active{background:var(--teal-l);color:var(--teal);border-color:var(--teal-b)}
+.ipanel{display:none}
+.ipanel.active{display:block}
+
+/* BOXES */
+.qbox{border-left:3px solid var(--teal-m);padding:10px 14px;background:var(--teal-l);border-radius:0 8px 8px 0;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:1rem}
+.wbox{border-left:3px solid var(--amber);padding:10px 14px;background:var(--amber-l);border-radius:0 8px 8px 0;font-size:13px;color:var(--amber);line-height:1.7;margin-bottom:1rem}
+
+/* LOADING */
+.pulse-wrap{display:flex;align-items:center;gap:8px;padding:2rem;color:var(--text3);font-size:13px}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--teal-m);animation:pp 1.2s infinite}
+.pdot:nth-child(2){animation-delay:0.2s}
+.pdot:nth-child(3){animation-delay:0.4s}
+@keyframes pp{0%,100%{opacity:0.25;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}
+.fadein{animation:fi 0.35s ease}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-ov.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:2rem;width:420px;max-width:90vw}
+.modal h3{font-family:var(--fd);font-size:22px;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--text2);margin-bottom:1.25rem}
+.modal input{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;font-family:var(--fm);font-size:13px;color:var(--text);outline:none;margin-bottom:1rem}
+.modal input:focus{border-color:var(--teal)}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+@media(max-width:600px){.page{padding:1rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span>Biorce <span style="font-family:var(--fb);font-size:12px;font-weight:300;color:var(--text3);margin-left:4px">· SDR Intelligence</span></div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:12px;color:var(--text3)">Viewing:</span>
+    <span class="company-pill" id="company-pill" onclick="showPage('search')">AtaiBeckley</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="api-dot" id="api-dot"></div>
+    <button class="api-btn" onclick="openModal()">API Key</button>
+  </div>
+</header>
+
+<nav>
+  <button class="ntab active" onclick="showPage('dashboard')" data-p="dashboard">⚡ Account Brief</button>
+  <button class="ntab" onclick="showPage('news')" data-p="news">📰 News</button>
+  <button class="ntab" onclick="showPage('leads')" data-p="leads">👥 Lead List</button>
+  <button class="ntab" onclick="showPage('aika')" data-p="aika">🧠 Why Aika</button>
+  <button class="ntab" onclick="showPage('flow')" data-p="flow">📞 Call Flow</button>
+  <button class="ntab" onclick="showPage('roi')" data-p="roi">💰 ROI</button>
+  <button class="ntab" onclick="showPage('search')" data-p="search">🔍 Prospect Search</button>
+  <button class="ntab" onclick="showPage('scripts')" data-p="scripts">📋 Scripts</button>
+</nav>
+
+<!-- ===== ACCOUNT BRIEF ===== -->
+<div id="page-dashboard" class="page active">
+  <div class="search-bar">
+    <div class="sb-top">
+      <input class="sb-input" id="db-company" placeholder="Company name..." value="AtaiBeckley"/>
+      <button class="btn btn-o bsm" onclick="toggleNotes('db-notes-wrap')">+ Add context</button>
+      <button class="btn btn-t bsm" onclick="runPageSearch('dashboard')">Generate with AI →</button>
+    </div>
+    <div id="db-notes-wrap" style="display:none">
+      <textarea class="sb-textarea" id="db-notes" placeholder="Paste any context you know about this company — pipeline info, recent news, contacts, anything. Claude will use this alongside its own knowledge."></textarea>
+      <div class="sb-note">Your notes + Claude's reasoning = a more accurate brief</div>
+    </div>
+  </div>
+  <div id="dash-content" class="fadein">
+    <!-- AtaiBeckley default -->
+    <div style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+        <div style="font-family:var(--fd);font-size:32px">AtaiBeckley</div>
+        <span class="badge bt">🎯 Priority</span><span class="badge ba">⚡ Phase 3 Launching Now</span><span class="badge bb">NASDAQ: ATAI</span>
+      </div>
+      <div style="font-size:13px;color:var(--text3)">Clinical-stage biotech · Mental health / Psychedelic therapies · New York, NY · Formed Nov 2025 (atai Life Sciences + Beckley Psytech merger)</div>
+    </div>
+    <div class="mrow">
+      <div class="mc"><div class="mv g">Q2 '26</div><div class="ml">Phase 3 launch (BPL-003)</div></div>
+      <div class="mc"><div class="mv">~$150M</div><div class="ml">Cash runway to 2029</div></div>
+      <div class="mc"><div class="mv">3</div><div class="ml">Active clinical programs</div></div>
+      <div class="mc"><div class="mv g">BTD</div><div class="ml">FDA Breakthrough Therapy Designation</div></div>
+      <div class="mc"><div class="mv">Nov '25</div><div class="ml">Company formed (merger)</div></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Pipeline</div>
+      <div class="pipe-item"><div style="min-width:90px"><span class="badge bt">Phase 3 ▶</span></div><div><div class="pipe-drug">BPL-003 — mebufotenin benzoate nasal spray</div><div class="pipe-detail">Treatment-Resistant Depression (TRD). Met all Phase 2b endpoints. Breakthrough Therapy Designation Oct 2025. FDA EOP2 meeting successful Mar 2026. <strong style="color:var(--teal)">Phase 3 launching Q2 2026.</strong></div></div></div>
+      <div class="pipe-item"><div style="min-width:90px"><span class="badge bb">Phase 2</span></div><div><div class="pipe-drug">VLS-01 — DMT buccal film</div><div class="pipe-detail">Treatment-Resistant Depression. Topline data expected H2 2026.</div></div></div>
+      <div class="pipe-item"><div style="min-width:90px"><span class="badge bb">Phase 2a</span></div><div><div class="pipe-drug">EMP-01 — oral R-MDMA</div><div class="pipe-detail">Social Anxiety Disorder. Enrollment completed. Results Q1 2026.</div></div></div>
+      <div class="pipe-item"><div style="min-width:90px"><span class="badge bg">Preclinical</span></div><div><div class="pipe-drug">5-HT2AR agonists — non-hallucinogenic neuroplastogens</div><div class="pipe-detail">Opioid use disorder + TRD. NIDA-funded.</div></div></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Why contact them now — trigger timeline</div>
+      <div class="tlist">
+        <div class="titem"><div class="tdot">📊</div><div><div class="tdate">Jul 2025</div><div class="ttitle">Positive Phase 2b data — BPL-003 met all endpoints</div><div class="twhy">Science proven. Phase 3 planning begins.</div></div></div>
+        <div class="titem"><div class="tdot">⭐</div><div><div class="tdate">Oct 2025</div><div class="ttitle">FDA Breakthrough Therapy Designation granted</div><div class="twhy">Every protocol decision now under a higher FDA microscope.</div></div></div>
+        <div class="titem"><div class="tdot">🔗</div><div><div class="tdate">Nov 2025</div><div class="ttitle">atai + Beckley Psytech merge to form AtaiBeckley</div><div class="twhy">Two teams merging — new coordination complexity. Aika provides one unified intelligence layer.</div></div></div>
+        <div class="titem"><div class="tdot" style="border-color:var(--teal);background:var(--teal-l)">✅</div><div><div class="tdate" style="color:var(--teal)">Mar 2026</div><div class="ttitle" style="color:var(--teal);font-weight:600">Successful FDA EOP2 meeting — Phase 3 greenlit</div><div class="twhy" style="color:var(--teal)">They are designing the Phase 3 protocol RIGHT NOW. Any flaw costs 85 days of recruitment.</div></div></div>
+        <div class="titem"><div class="tdot" style="border-color:var(--amber);background:var(--amber-l)">🚀</div><div><div class="tdate" style="color:var(--amber)">Q2 2026 — now</div><div class="ttitle">Phase 3 pivotal program launches</div><div class="twhy">Patent clock ticking. $10–15M/day at peak sales. Every delay is permanent revenue lost.</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec">Pain points → Aika solutions</div>
+      <div class="pgrid">
+        <div class="pcard"><div class="phead"><div class="pnum">1</div><div class="ptitle">Phase 3 protocol — highest stakes design moment</div></div><div class="pdesc">57% of trials need at least one amendment. Each freezes recruitment 85 days. For BPL-003 with BTD and public company pressure, one amendment is critical.</div><div class="paika">→ Aika benchmarks against 260K+ protocols. 50% fewer amendments proven.</div></div>
+        <div class="pcard"><div class="phead"><div class="pnum">2</div><div class="ptitle">Narrow TRD patient population — eligibility risk</div></div><div class="pdesc">Treatment-resistant depression patients are hard to identify. Wrong eligibility criteria silently destroy recruitment before the trial even starts.</div><div class="paika">→ Aika optimises I/E criteria against historical success patterns from comparable trials.</div></div>
+        <div class="pcard"><div class="phead"><div class="pnum">3</div><div class="ptitle">First-in-class delivery — no regulatory playbook</div></div><div class="pdesc">Intranasal psychedelic with no precedent. BTD means more frequent FDA interaction. Every regulatory misstep delays approval.</div><div class="paika">→ Aika flags red flags against ICH-GCP, FDA and EMA guidelines. 100% explainable, defensible.</div></div>
+        <div class="pcard"><div class="phead"><div class="pnum">4</div><div class="ptitle">3 parallel programs — cross-functional overload</div></div><div class="pdesc">BPL-003 Phase 3 + VLS-01 Phase 2 + EMP-01 Phase 2a simultaneously. Newly merged company still unifying clinical operations.</div><div class="paika">→ Aika delivers 10x faster cross-functional review. $250K–400K saved per study.</div></div>
+        <div class="pcard"><div class="phead"><div class="pnum">5</div><div class="ptitle">Public company — every delay is visible</div></div><div class="pdesc">NASDAQ-listed, added to Biotech Index Dec 2025. Protocol amendments move the stock price directly. Board watches every milestone.</div><div class="paika">→ Aika de-risks the most scrutinised design decision in the company's current lifecycle.</div></div>
+        <div class="pcard"><div class="phead"><div class="pnum">6</div><div class="ptitle">Site feasibility for specialist population</div></div><div class="pdesc">Psychedelic trial sites need specialised infrastructure. Finding the right Phase 3 sites globally is a major operational challenge.</div><div class="paika">→ Aika identifies top sites by past participation in similar trials with evidence-based enrollment forecasts.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NEWS ===== -->
+<div id="page-news" class="page">
+  <div class="search-bar">
+    <div class="sb-top">
+      <input class="sb-input" id="nw-company" placeholder="Company name..." value="AtaiBeckley"/>
+      <button class="btn btn-o bsm" onclick="toggleNotes('nw-notes-wrap')">+ Add context</button>
+      <button class="btn btn-t bsm" onclick="runPageSearch('news')">Generate with AI →</button>
+    </div>
+    <div id="nw-notes-wrap" style="display:none">
+      <textarea class="sb-textarea" id="nw-notes" placeholder="Paste any recent news, press releases, or links you've found about this company..."></textarea>
+    </div>
+  </div>
+  <div id="news-content" class="fadein">
+    <div style="margin-bottom:1rem"><div style="font-family:var(--fd);font-size:22px;margin-bottom:2px">AtaiBeckley — Recent News</div><div style="font-size:13px;color:var(--text3)">Verified sources · click headlines to open original articles · annotated with Aika relevance</div></div>
+    <div class="card">
+      <div class="news-item"><div class="ndate">Mar 2026</div><div><div class="ntitle"><a href="https://www.globenewswire.com/news-release/2026/03/03/3248186/0/en/AtaiBeckley-Announces-Successful-End-of-Phase-2-Meeting-for-BPL-003-in-Treatment-Resistant-Depression.html" target="_blank">AtaiBeckley Announces Successful End-of-Phase 2 Meeting for BPL-003 ↗</a></div><div class="nsrc">GlobeNewswire · March 3, 2026</div><div class="nwhy">🎯 The trigger — FDA greenlit Phase 3. They are writing the protocol TODAY.</div></div></div>
+      <div class="news-item"><div class="ndate">Mar 2026</div><div><div class="ntitle"><a href="https://www.biospace.com/press-releases/ataibeckley-reports-fourth-quarter-and-full-year-2025-financial-results-and-provides-business-and-clinical-update" target="_blank">AtaiBeckley Reports Q4 and Full Year 2025 Financial Results ↗</a></div><div class="nsrc">BioSpace · March 6, 2026</div><div class="nwhy">💡 Phase 3 for BPL-003 confirmed Q2 2026. $150M+ runway to 2029.</div></div></div>
+      <div class="news-item"><div class="ndate">Feb 2026</div><div><div class="ntitle"><a href="https://www.globenewswire.com/news-release/2026/02/19/3240936/0/en/AtaiBeckley-Appoints-Michael-Faerm-as-Chief-Financial-Officer.html" target="_blank">AtaiBeckley Appoints Michael Faerm as Chief Financial Officer ↗</a></div><div class="nsrc">GlobeNewswire · February 19, 2026</div><div class="nwhy">💡 New CFO = fresh perspective on operational costs. Budget conversations become easier.</div></div></div>
+      <div class="news-item"><div class="ndate">Jan 2026</div><div><div class="ntitle"><a href="https://www.biospace.com/press-releases/ataibeckley-provides-update-and-outlook-for-2026-ahead-of-j-p-morgan-healthcare-conference" target="_blank">AtaiBeckley Outlook for 2026 — J.P. Morgan Healthcare Conference ↗</a></div><div class="nsrc">BioSpace · January 8, 2026</div><div class="nwhy">📊 CEO: "We enter 2026 with meaningful momentum." Investor pressure to execute at peak.</div></div></div>
+      <div class="news-item"><div class="ndate">Dec 2025</div><div><div class="ntitle"><a href="https://www.biospace.com/press-releases/ataibeckley-completes-redomiciliation-to-the-united-states" target="_blank">AtaiBeckley Completes Redomiciliation to the United States ↗</a></div><div class="nsrc">BioSpace · December 31, 2025</div><div class="nwhy">🇺🇸 NASDAQ-listed. Operational delays now directly move the stock price.</div></div></div>
+      <div class="news-item"><div class="ndate">Nov 2025</div><div><div class="ntitle"><a href="https://ir.ataibeckley.com/news-releases/news-release-details/atai-life-sciences-and-beckley-psytech-announce-successful/" target="_blank">atai Life Sciences + Beckley Psytech Complete Strategic Combination ↗</a></div><div class="nsrc">AtaiBeckley IR · November 5, 2025</div><div class="nwhy">🔗 Two clinical teams merging = new coordination complexity. Aika provides one unified intelligence layer.</div></div></div>
+      <div class="news-item"><div class="ndate">Oct 2025</div><div><div class="ntitle"><a href="https://www.quiverquant.com/news/Atai+Beckley+N.V.+Announces+Breakthrough+Therapy+Designation+for+BPL-003+and+Positive+Phase+2+Results+for+Treatment-Resistant+Depression" target="_blank">BPL-003 Receives FDA Breakthrough Therapy Designation + Positive Phase 2 Results ↗</a></div><div class="nsrc">QuiverQuant · October 2025</div><div class="nwhy">⭐ BTD = elevated FDA scrutiny. Aika's 100% explainable outputs are especially valuable here.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEAD LIST ===== -->
+<div id="page-leads" class="page">
+  <div style="margin-bottom:1.25rem;padding-top:0.5rem">
+    <div style="font-family:var(--fd);font-size:26px;margin-bottom:4px">Lead List — by Company Type</div>
+    <div style="font-size:13px;color:var(--text3)">Job titles to search on LinkedIn for each type of Biorce prospect</div>
+  </div>
+  <div class="itabs">
+    <button class="itab active" onclick="showInner('biotech')">Clinical-stage Biotech</button>
+    <button class="itab" onclick="showInner('pharma')">Large/Mid Pharma</button>
+    <button class="itab" onclick="showInner('cro')">CRO</button>
+    <button class="itab" onclick="showInner('academic')">Academic / Non-profit</button>
+  </div>
+
+  <div id="inner-biotech" class="ipanel active">
+    <div class="qbox">Clinical-stage biotechs (like AtaiBeckley) are the ideal Aika prospect — small teams, high protocol stakes, limited internal clinical ops resources, every amendment has outsized impact.</div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 1 — Direct buyers / champions (search these first)</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Chief Medical Officer / CMO</div><div class="ll-sub">Owns clinical strategy. Most likely to champion Aika internally. Often the decision maker in smaller biotechs.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">VP Clinical Operations / Head of Clinical Ops</div><div class="ll-sub">Manages protocol execution day to day. Feels the pain of amendments and slow reviews most acutely.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">VP Regulatory Affairs / Head of Regulatory</div><div class="ll-sub">Responsible for FDA/EMA submissions. Immediately understands the value of explainable, defensible outputs.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Director / Head of Clinical Development</div><div class="ll-sub">Runs the programs day to day. Understands protocol design pain intimately.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Clinical Program Manager (Phase 2/3)</div><div class="ll-sub">Closest to the protocol. Will feel Aika's value immediately. Good champion to build internally.</div></div><span class="badge bt">Primary</span></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 2 — Influencers (bring them in once you have a champion)</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Head of Biostatistics / VP Biostatistics</div><div class="ll-sub">Will care about SAP, statistical design, CDISC alignment.</div></div><span class="badge bb">Secondary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Head of Data Management / Data Science</div><div class="ll-sub">Relevant for CRF, DMP, USDM capabilities.</div></div><span class="badge bb">Secondary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Director Regulatory Affairs</div><div class="ll-sub">Works under VP Regulatory, involved in IND/CTA submissions.</div></div><span class="badge bb">Secondary</span></div>
+    </div>
+    <div class="card">
+      <div class="sec">Tier 3 — Economic buyers (approach only after a champion is warmed up)</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">CEO / Co-Founder</div><div class="ll-sub">Understands the business case but needs an internal champion first. Cold outreach to CEO rarely converts in clinical-stage biotech.</div></div><span class="badge ba">Economic</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">COO / Chief Operating Officer</div><div class="ll-sub">Cares about operational efficiency and budget. Relevant when cost savings are the primary angle.</div></div><span class="badge ba">Economic</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">CFO / Chief Financial Officer</div><div class="ll-sub">Bring in when you have ROI data from the CMO/VP Clinical Ops. Budget approval stage.</div></div><span class="badge ba">Budget</span></div>
+    </div>
+  </div>
+
+  <div id="inner-pharma" class="ipanel">
+    <div class="qbox">Large and mid-size pharma have more internal resources but also more bureaucracy. The challenge is finding the right programme-level owner — not a central IT or procurement team.</div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 1 — Programme-level champions</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Therapeutic Area Head / TA Medical Director</div><div class="ll-sub">Owns the clinical strategy for a disease area. The right level — not too senior, not too junior.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">VP / Director Clinical Development (by TA)</div><div class="ll-sub">Runs programs within a therapeutic area. Understands protocol amendment pain directly.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Head of Clinical Operations (Global or TA-level)</div><div class="ll-sub">Manages the execution machinery. Aika's efficiency gains resonate immediately.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Global Clinical Lead / Program Lead (Phase 2/3)</div><div class="ll-sub">Specific to one program. Most invested in protocol quality. Excellent champion.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Head of Regulatory Affairs (TA or Global)</div><div class="ll-sub">Understands regulatory risk. Will appreciate Aika's traceability and GxP compliance.</div></div><span class="badge bt">Primary</span></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 2 — Influencers</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Digital Innovation / R&D Digital Lead</div><div class="ll-sub">In large pharma, there's often a dedicated innovation team. They may already be looking for Aika-type solutions.</div></div><span class="badge bb">Secondary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Head of Biostatistics / Data Science (TA)</div><div class="ll-sub">Relevant for statistical design and SAP capabilities.</div></div><span class="badge bb">Secondary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--blue-l);color:var(--blue)">T2</div><div class="ll-info"><div class="ll-name">Clinical Project Manager (Programme-level)</div><div class="ll-sub">Operational champion. Closest to day-to-day protocol pain.</div></div><span class="badge bb">Secondary</span></div>
+    </div>
+    <div class="card">
+      <div class="sec">Tier 3 — Economic buyers</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">Chief Medical Officer / CMO</div><div class="ll-sub">In large pharma the CMO is too senior for a cold approach. Reach them via a TA Head champion.</div></div><span class="badge ba">Economic</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">SVP / EVP R&D</div><div class="ll-sub">Budget authority. Only approach after programme-level validation.</div></div><span class="badge ba">Economic</span></div>
+    </div>
+  </div>
+
+  <div id="inner-cro" class="ipanel">
+    <div class="qbox">CROs are a different sales motion — Aika becomes a competitive advantage they offer to their pharma/biotech clients. The pitch is about differentiating their service, not just internal efficiency.</div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 1 — Champions</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">VP / Head of Clinical Operations</div><div class="ll-sub">Owns delivery quality. Aika helps them deliver faster and with fewer errors — directly improves their client satisfaction.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Head of Protocol Development / Medical Writing</div><div class="ll-sub">Directly uses Aika for protocol generation. Huge efficiency gain for their team.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">VP Business Development / BD Director</div><div class="ll-sub">Can see how Aika makes their proposals more competitive. Win more RFPs.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Head of Regulatory Affairs / Regulatory Strategy</div><div class="ll-sub">Values Aika's GxP compliance and regulatory red flag detection.</div></div><span class="badge bt">Primary</span></div>
+    </div>
+    <div class="card">
+      <div class="sec">Tier 3 — Economic buyers</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">CEO / President</div><div class="ll-sub">For smaller CROs the CEO may be approachable directly. For large CROs (IQVIA, ICON, Syneos) need a programme champion first.</div></div><span class="badge ba">Economic</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">COO / Chief Operating Officer</div><div class="ll-sub">Interested in operational efficiency and margin improvement.</div></div><span class="badge ba">Economic</span></div>
+    </div>
+  </div>
+
+  <div id="inner-academic" class="ipanel">
+    <div class="qbox">Academic medical centres and non-profit research organisations run trials but have very limited internal resources. Aika can dramatically reduce the workload on clinical research coordinators and investigators.</div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="sec">Tier 1 — Champions</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Principal Investigator (PI) — Senior Clinical Faculty</div><div class="ll-sub">Responsible for protocol quality and regulatory compliance. Directly benefits from Aika.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Director of Clinical Research / Research Operations</div><div class="ll-sub">Manages the research infrastructure. Aika reduces their team's workload significantly.</div></div><span class="badge bt">Primary</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--teal-l);color:var(--teal)">T1</div><div class="ll-info"><div class="ll-name">Regulatory Affairs Manager / IRB Coordinator</div><div class="ll-sub">Deals with submissions daily. Aika's ICF, EC/IRB forms and cover letters are immediate value.</div></div><span class="badge bt">Primary</span></div>
+    </div>
+    <div class="card">
+      <div class="sec">Tier 3 — Economic buyers</div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">Department Chair / Division Chief</div><div class="ll-sub">Controls research budgets within a department.</div></div><span class="badge ba">Economic</span></div>
+      <div class="ll-item"><div class="ll-av" style="background:var(--amber-l);color:var(--amber)">T3</div><div class="ll-info"><div class="ll-name">VP Research / Chief Research Officer</div><div class="ll-sub">Institution-level budget authority. Needs multiple departmental champions first.</div></div><span class="badge ba">Economic</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WHY AIKA ===== -->
+<div id="page-aika" class="page">
+  <div style="margin-bottom:1.25rem;padding-top:0.5rem">
+    <div style="font-family:var(--fd);font-size:26px;margin-bottom:4px">Why Aika</div>
+    <div style="font-size:13px;color:var(--text3)">Performance vs old way · Competitor comparison · Key differentiators</div>
+  </div>
+  <div class="itabs">
+    <button class="itab active" onclick="showInner('perf')">vs Old way</button>
+    <button class="itab" onclick="showInner('comp')">vs Competitors</button>
+    <button class="itab" onclick="showInner('diff')">Differentiators</button>
+  </div>
+
+  <div id="inner-perf" class="ipanel active">
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-title">Protocol drafting speed</div><div class="feat-val">75%</div><div class="feat-desc">faster than traditional manual process</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Traditional</span><div class="bwrp"><div class="bfill b-old" style="width:100%"></div></div><span class="vs-val">100%</span></div><div class="vs-bar"><span class="vs-label">Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:25%"></div></div><span class="vs-val">25%</span></div></div></div>
+      <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title">Protocol amendments</div><div class="feat-val">50%</div><div class="feat-desc">fewer amendments vs industry baseline of 57%</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Industry avg</span><div class="bwrp"><div class="bfill b-old" style="width:100%"></div></div><span class="vs-val">57%</span></div><div class="vs-bar"><span class="vs-label">With Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:50%"></div></div><span class="vs-val">~28%</span></div></div></div>
+      <div class="feat-card"><div class="feat-icon">👥</div><div class="feat-title">Cross-functional review</div><div class="feat-val">10x</div><div class="feat-desc">faster review cycles across teams</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Traditional</span><div class="bwrp"><div class="bfill b-old" style="width:100%"></div></div><span class="vs-val">10x</span></div><div class="vs-bar"><span class="vs-label">Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:10%"></div></div><span class="vs-val">1x</span></div></div></div>
+      <div class="feat-card"><div class="feat-icon">💰</div><div class="feat-title">Cost saved per study</div><div class="feat-val">$400K</div><div class="feat-desc">up to $400K saved per study — proven with top-15 pharma</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Without Aika</span><div class="bwrp"><div class="bfill b-old" style="width:100%"></div></div><span class="vs-val">Baseline</span></div><div class="vs-bar"><span class="vs-label">With Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:65%"></div></div><span class="vs-val">-$400K</span></div></div></div>
+      <div class="feat-card"><div class="feat-icon">🗃️</div><div class="feat-title">Data foundation</div><div class="feat-val">1M+</div><div class="feat-desc">global trial records + 260K+ real protocols</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Traditional</span><div class="bwrp"><div class="bfill b-old" style="width:8%"></div></div><span class="vs-val">Internal</span></div><div class="vs-bar"><span class="vs-label">Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:100%"></div></div><span class="vs-val">1M+</span></div></div></div>
+      <div class="feat-card"><div class="feat-icon">📅</div><div class="feat-title">Days lost per amendment</div><div class="feat-val">85</div><div class="feat-desc">days of recruitment frozen per amendment — Aika helps prevent these</div><div style="margin-top:12px"><div class="vs-bar"><span class="vs-label">Per amendment</span><div class="bwrp"><div class="bfill b-old" style="width:100%"></div></div><span class="vs-val">85d</span></div><div class="vs-bar"><span class="vs-label">Target with Aika</span><div class="bwrp"><div class="bfill b-aika" style="width:5%"></div></div><span class="vs-val">~0d</span></div></div></div>
+    </div>
+  </div>
+
+  <div id="inner-comp" class="ipanel">
+    <div class="qbox">Aika's main competitors: <strong>Faro Health</strong> (protocol AI, BMS partnership), <strong>Evinova</strong> (AstraZeneca's platform, BMS/Astellas/AZ partnerships), <strong>IQVIA</strong> (legacy CRO + AI tools), <strong>Medidata/Veeva</strong> (enterprise data management), <strong>Cytel</strong> (statistical design). None offer Aika's end-to-end explainable intelligence from design to submission.</div>
+    <div class="card" style="overflow-x:auto">
+      <table class="ctable">
+        <thead><tr>
+          <th>Capability</th>
+          <th class="aika-head">✦ Aika (Biorce)</th>
+          <th>Faro Health</th>
+          <th>Evinova (AZ)</th>
+          <th>IQVIA</th>
+          <th>Medidata/Veeva</th>
+          <th>Cytel</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="rh">Protocol generation</td><td class="aika-col"><span class="check">✓ Full AI-native</span></td><td><span class="check">✓ Template-based</span></td><td><span class="check">✓ AI-assisted</span></td><td><span class="partial">~ Partial</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td class="rh">100% explainable outputs</td><td class="aika-col"><span class="check">✓ Fully traceable</span></td><td><span class="cross">✗ Black box</span></td><td><span class="partial">~ Partial</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td class="rh">Built on 1M+ real trials</td><td class="aika-col"><span class="check">✓ 260K+ protocols</span></td><td><span class="partial">~ Limited</span></td><td><span class="partial">~ AZ internal data</span></td><td><span class="partial">~ Some</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td class="rh">Regulatory red flag detection</td><td class="aika-col"><span class="check">✓ ICH-GCP, FDA, EMA</span></td><td><span class="partial">~ Basic</span></td><td><span class="partial">~ Some</span></td><td><span class="partial">~ Manual</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td class="rh">End-to-end (design→submission)</td><td class="aika-col"><span class="check">✓ Full lifecycle</span></td><td><span class="partial">~ Protocol only</span></td><td><span class="partial">~ Partial</span></td><td><span class="check">✓ Execution only</span></td><td><span class="check">✓ Data only</span></td><td><span class="partial">~ Stats only</span></td></tr>
+          <tr><td class="rh">GxP + SOC2 Type II + HIPAA</td><td class="aika-col"><span class="check">✓ All three</span></td><td><span class="partial">~ Partial</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="partial">~ Partial</span></td></tr>
+          <tr><td class="rh">No programming required</td><td class="aika-col"><span class="check">✓ Conversational</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">✗ Experts needed</span></td><td><span class="cross">✗ Experts needed</span></td><td><span class="cross">✗ Stats expertise</span></td></tr>
+          <tr><td class="rh">Independent (not pharma-owned)</td><td class="aika-col"><span class="check">✓ Fully independent</span></td><td><span class="check">✓</span></td><td><span class="cross">✗ AstraZeneca owned</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td class="rh">Funding / momentum</td><td class="aika-col"><span class="check">✓ $60M, 200% rev growth</span></td><td><span class="partial">~ $24M raised</span></td><td><span class="check">✓ AZ-backed</span></td><td><span class="check">✓ Public $15B+</span></td><td><span class="check">✓ Public</span></td><td><span class="partial">~ Private</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px">✓ full · ~ partial · ✗ not available. Sources: Biorce docs, Faro Health, Evinova (Applied Clinical Trials May 2026), IQVIA/Medidata public docs.</div>
+  </div>
+
+  <div id="inner-diff" class="ipanel">
+    <div class="feat-grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">🔍</div><div class="feat-title">100% Explainable</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">Every output traceable to source protocols and regulatory precedent. Defensible before FDA and EMA at every step. No black box — unlike Faro Health or generic LLM tools.</div></div>
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">📚</div><div class="feat-title">Built on Real Evidence</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">1M+ global trial records. 260,000+ real protocols. PubMed literature. Regulatory guidelines. Curated by Biorce's scientific team — not generic AI outputs scaled from templates.</div></div>
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">🔗</div><div class="feat-title">True End-to-End</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">Design to submission in one connected layer. Faro = protocol only. Evinova = partial. Medidata = execution only. Aika covers the entire clinical lifecycle.</div></div>
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">🏛️</div><div class="feat-title">Enterprise-Grade Day One</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">GxP-compliant. SOC2 Type II certified. HIPAA-ready. Your IP remains yours. Kills the compliance objection before it's raised.</div></div>
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">🎯</div><div class="feat-title">Purpose-Built</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">Not bolted onto a legacy CRO system. Not a generic LLM. Built exclusively for clinical R&D — the only focus. Competitors are general platforms that also do clinical.</div></div>
+      <div class="feat-card" style="text-align:left"><div class="feat-icon">🌍</div><div class="feat-title">Fully Independent</div><div class="feat-desc" style="font-size:13px;line-height:1.7;margin-top:6px">Evinova is AstraZeneca-owned — would a company share competitive pipeline data with an AZ platform? Aika is independent. No competitive conflict of interest.</div></div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="sec">Capabilities — now vs roadmap</div>
+      <div class="cap-row"><div class="cap-time">Live now</div><div class="cap-items"><span class="cpill now">Protocol generation</span><span class="cpill now">Regulatory red flags</span><span class="cpill now">Eligibility optimisation</span><span class="cpill now">ICF drafting</span><span class="cpill now">Competitive benchmarking</span><span class="cpill now">IND/FDA submission</span><span class="cpill now">Site feasibility</span><span class="cpill now">SAP / CRF / CSR</span><span class="cpill now">Monitoring reports</span><span class="cpill now">Budget estimation</span></div></div>
+      <div class="cap-row" style="margin-top:8px"><div class="cap-time">Q2–Q3 '26</div><div class="cap-items"><span class="cpill soon">AI contract negotiation</span><span class="cpill soon">Patient identification</span><span class="cpill soon">Enhanced site ranking</span><span class="cpill soon">HEOR model</span><span class="cpill soon">Site oversight reports</span></div></div>
+      <div class="cap-row" style="margin-top:8px"><div class="cap-time">Q4 '26</div><div class="cap-items"><span class="cpill later">NDA/MAA automation</span><span class="cpill later">Dossier validation</span><span class="cpill later">Post-approval intelligence</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CALL FLOW ===== -->
+<div id="page-flow" class="page">
+  <div class="search-bar">
+    <div class="sb-top">
+      <input class="sb-input" id="fl-company" placeholder="Company name..." value="AtaiBeckley"/>
+      <button class="btn btn-o bsm" onclick="toggleNotes('fl-notes-wrap')">+ Add context</button>
+      <button class="btn btn-t bsm" onclick="runPageSearch('flow')">Personalise with AI →</button>
+    </div>
+    <div id="fl-notes-wrap" style="display:none">
+      <textarea class="sb-textarea" id="fl-notes" placeholder="Add specifics about the contact or company — their role, pain points you already know, recent conversation..."></textarea>
+    </div>
+  </div>
+  <div id="flow-content" class="fadein">
+    <div style="font-size:13px;color:var(--text3);margin-bottom:1rem">Click any step to reveal the script · handles any direction the call takes</div>
+    <div class="qbox">This is a decision tree — not a script to read word for word. Navigate it in real time based on what the prospect says.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem">
+      <span class="badge bt">57% need an amendment</span><span class="badge bt">45% avoidable</span><span class="badge bt">85 days frozen</span><span class="badge bt">75% faster drafting</span><span class="badge bt">50% fewer amendments</span><span class="badge bt">10x faster review</span><span class="badge bt">$400K saved/study</span><span class="badge bt">1M+ trial records</span><span class="badge bt">GxP + SOC2 + HIPAA</span>
+    </div>
+    <div class="flow-node" onclick="toggleNode(this)">
+      <div class="fn-label">Step 1 · Opening</div>
+      <div class="fn-title">Warm intro — before they hang up</div>
+      <div class="fn-script">"Hi [Name], this is [Teresa] from Biorce. I'll be quick — I reached out because I saw [AtaiBeckley just completed your EOP2 meeting for BPL-003 / your company just announced X]. I had one specific thought on how we might be able to help with your Phase 3 timing. Do you have 90 seconds?"</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="bwrap">
+      <div class="flow-node byes" onclick="toggleNode(this)"><div class="blabel y">Yes — they have time</div><div class="fn-title">Move to discovery</div><div class="fn-script">"Thank you. Before I say anything about what we do — can I ask one question? How is your team currently approaching the Phase 3 protocol design? Is that being done fully in-house, or are you working with a CRO?"</div></div>
+      <div class="flow-node bno" onclick="toggleNode(this)"><div class="blabel n">No — bad time</div><div class="fn-title">Respect it, get the next step</div><div class="fn-script">"Completely understand. When would be a better time this week or next? I can send a brief email in the meantime so you have context before we speak."</div></div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)">
+      <div class="fn-label">Step 2 · Discovery</div>
+      <div class="fn-title">Ask, don't pitch — find the real pain</div>
+      <div class="fn-script">Rotate through 1–2 of these — listen deeply, don't rush to pitch:
+
+• "Have you had protocol amendments in any of your programs? What was the impact on your timeline?"
+• "How are you benchmarking your eligibility criteria against what's worked in comparable trials?"
+• "With Breakthrough Therapy Designation, FDA interaction is more frequent — how are you stress-testing the protocol before submission?"
+• "You're running three programs in parallel — how is your clinical ops team managing the cross-functional review load?"</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)">
+      <div class="fn-label">Step 3 · Bridge</div>
+      <div class="fn-title">Connect what you heard to Aika — specifically</div>
+      <div class="fn-script">"What you're describing — [repeat their exact words back] — is exactly what Aika was built to solve. We're an AI-native clinical development platform. A top-15 global pharma used us on an early-phase oncology study and saw 50% fewer amendments and $250K–400K saved per study, within 30 days. The reason this is relevant for [BPL-003 / their program] specifically is [connect to their exact situation]."</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="bwrap">
+      <div class="flow-node byes" onclick="toggleNode(this)"><div class="blabel y">Interested</div><div class="fn-title">Book the next step</div><div class="fn-script">"The best next step is a 30-minute call with our scientific team — they can walk through exactly how this applies to your specific protocol design. Would [day/time] work, or is there a better time this week?"</div></div>
+      <div class="flow-node bno" onclick="toggleNode(this)"><div class="blabel n">Objection raised</div><div class="fn-title">Handle and reframe</div><div class="fn-script">"We have scientists" → "Aika doesn't replace them — it's intelligence that makes their decisions more defensible. The companies that benefit most have strong science teams who want to stress-test work against 260K real protocols."
+
+"We have a CRO" → "Does your CRO benchmark in real time against 260,000 protocols? Most use institutional knowledge. Aika is the layer that makes their work more defensible."
+
+"Too busy" → "That's exactly when it matters — one amendment costs 85 days. A 2-hour session before you lock the protocol could prevent that."
+
+"Wrong therapeutic area" → "We're live in neurology and rare diseases. I can connect you with our scientific team to show you the specific fit."</div></div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)">
+      <div class="fn-label">Step 4 · Close</div>
+      <div class="fn-title">Always leave with a defined next step</div>
+      <div class="fn-script">"Based on what you've shared — [Phase 3 timing / parallel programs / regulatory complexity] — the highest-value next step is a focused protocol review session with our scientific team before you lock the design. Can I send a calendar invite right now?"
+
+If no to meeting: "Would it help if I sent you a one-pager on how Aika worked in a neurology context? No obligation — just useful background before we speak."</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROI ===== -->
+<div id="page-roi" class="page">
+  <div class="search-bar">
+    <div class="sb-top">
+      <input class="sb-input" id="roi-company" placeholder="Company name..." value="AtaiBeckley"/>
+      <button class="btn btn-o bsm" onclick="toggleNotes('roi-notes-wrap')">+ Add context</button>
+      <button class="btn btn-t bsm" onclick="runPageSearch('roi')">Calculate with AI →</button>
+    </div>
+    <div id="roi-notes-wrap" style="display:none">
+      <textarea class="sb-textarea" id="roi-notes" placeholder="Add details — number of active programs, typical study size, known budget constraints — Claude will pre-fill the calculator..."></textarea>
+    </div>
+  </div>
+  <div id="roi-content" class="fadein">
+    <div class="roi-grid">
+      <div class="card">
+        <div class="sec">Inputs</div>
+        <div class="roi-in"><div class="roi-lbl">Active clinical programs <span id="vp">3</span></div><input type="range" min="1" max="10" value="3" step="1" oninput="updateROI()" id="rp"/></div>
+        <div class="roi-in"><div class="roi-lbl">Studies per program/year <span id="vs">2</span></div><input type="range" min="1" max="5" value="2" step="1" oninput="updateROI()" id="rs"/></div>
+        <div class="roi-in"><div class="roi-lbl">Amendments avoided/study <span id="va">1</span></div><input type="range" min="0" max="3" value="1" step="1" oninput="updateROI()" id="ra"/></div>
+        <div class="roi-in"><div class="roi-lbl">Days saved per amendment <span id="vd">85</span> days</div><input type="range" min="30" max="180" value="85" step="5" oninput="updateROI()" id="rd"/></div>
+        <div class="roi-in"><div class="roi-lbl">Peak daily revenue ($M) <span id="vr">$12</span>M</div><input type="range" min="1" max="20" value="12" step="1" oninput="updateROI()" id="rr"/></div>
+        <div class="roi-in"><div class="roi-lbl">Operational saving/study ($K) <span id="vc">$325</span>K</div><input type="range" min="100" max="500" value="325" step="25" oninput="updateROI()" id="rc"/></div>
+      </div>
+      <div>
+        <div class="roi-res">
+          <div style="font-size:11px;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px">Total Annual Value</div>
+          <div class="roi-big" id="roi-total">$0</div>
+          <div style="font-size:12px;color:var(--text2)">recovered revenue + operational savings</div>
+        </div>
+        <div class="card">
+          <div class="sec">Breakdown</div>
+          <div class="roi-row"><span style="color:var(--text2)">Total studies/year</span><span style="font-family:var(--fm);font-size:13px" id="b1">6</span></div>
+          <div class="roi-row"><span style="color:var(--text2)">Amendments avoided</span><span style="font-family:var(--fm);font-size:13px" id="b2">6</span></div>
+          <div class="roi-row"><span style="color:var(--text2)">Recruitment days recovered</span><span style="font-family:var(--fm);font-size:13px" id="b3">510d</span></div>
+          <div class="roi-row"><span style="color:var(--text2)">Revenue opportunity recovered</span><span style="font-family:var(--fm);font-size:13px" id="b4">$0</span></div>
+          <div class="roi-row"><span style="color:var(--text2)">Direct operational savings</span><span style="font-family:var(--fm);font-size:13px" id="b5">$0</span></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);padding:8px 4px;line-height:1.6">Revenue recovered = avoided opportunity cost during patent exclusivity. Operational savings are direct per-study cost reductions proven with top-15 pharma.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SEARCH ===== -->
+<div id="page-search" class="page">
+  <div style="margin-bottom:1.25rem;padding-top:0.5rem">
+    <div style="font-family:var(--fd);font-size:26px;margin-bottom:4px">Prospect Search</div>
+    <div style="font-size:13px;color:var(--text3)">Search any company — the Account Brief, News, Call Flow and ROI tabs all update with that company's data</div>
+  </div>
+  <div class="search-bar">
+    <div class="sb-top">
+      <input class="sb-input" id="main-search" placeholder="Type any pharma or biotech company... e.g. Recursion, Novo Nordisk, Relay Therapeutics" onkeydown="if(event.key==='Enter')runMainSearch()"/>
+      <button class="btn btn-t" onclick="runMainSearch()">Research →</button>
+    </div>
+    <div style="margin-top:6px">
+      <button class="sb-toggle" onclick="toggleNotes('main-notes-wrap')">+ Add your own notes about this company</button>
+    </div>
+    <div id="main-notes-wrap" style="display:none;margin-top:8px">
+      <textarea class="sb-textarea" id="main-notes" placeholder="Paste anything you know — pipeline info, contacts, recent conversations, news links. Claude will combine your context with its own knowledge."></textarea>
+    </div>
+  </div>
+  <div id="search-res">
+    <div style="text-align:center;padding:3rem;color:var(--text3);font-size:13px">
+      <div style="font-size:36px;margin-bottom:1rem">🔬</div>
+      Search any clinical-stage or commercial pharma company.<br>The Account Brief, News, Call Flow and ROI tabs will all update with that company's data.
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<div id="page-scripts" class="page">
+  <div style="margin-bottom:1.25rem;padding-top:0.5rem">
+    <div style="font-family:var(--fd);font-size:26px;margin-bottom:4px">Cold Call Script Generator</div>
+    <div style="font-size:13px;color:var(--text3)">Upload your lead CSV → personalised script for every lead</div>
+  </div>
+  <div id="upload-sec">
+    <div class="card">
+      <div class="sec">Your leads</div>
+      <div class="upload-zone" id="upzone" onclick="document.getElementById('finput').click()">
+        <div class="uicon">📋</div>
+        <h3>Drop your CSV here</h3>
+        <p>or click to browse · accepts .csv files</p>
+        <input type="file" id="finput" accept=".csv" style="display:none"/>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:1rem">
+        <span class="chip">first_name</span><span class="chip">last_name</span><span class="chip">company_name</span><span class="chip">title</span><span class="chip">linkedin</span><span class="chip">email</span>
+      </div>
+    </div>
+  </div>
+  <div id="leads-sec" style="display:none">
+    <div class="card">
+      <div class="sec" id="lcount">Leads ready</div>
+      <table class="ltable"><thead><tr><th>Name</th><th>Title</th><th>Company</th><th>Status</th></tr></thead><tbody id="ltbody"></tbody></table>
+      <div style="display:flex;gap:8px;margin-top:1.25rem">
+        <button class="btn btn-t" id="gen-btn" onclick="generateAll()">Generate scripts</button>
+        <button class="btn btn-o" onclick="resetScripts()">Upload new CSV</button>
+      </div>
+    </div>
+  </div>
+  <div id="prog-sec" style="display:none">
+    <div class="card"><div class="sec">Generating</div><div class="prog-wrap"><div class="prog-fill" id="pfill" style="width:0%"></div></div><div style="font-size:12px;color:var(--text3);font-family:var(--fm)" id="ptext">Starting...</div></div>
+  </div>
+  <div id="scripts-sec" style="display:none">
+    <div class="sec" style="margin-bottom:1rem">Generated scripts</div>
+    <div id="scripts-con"></div>
+    <button class="btn btn-o" id="dl-btn" onclick="downloadAll()" style="display:none;margin-top:0.5rem">↓ Download all</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal-ov">
+  <div class="modal">
+    <h3>Anthropic API key</h3>
+    <p>Stored locally in your browser only. Get yours at <strong>console.anthropic.com</strong></p>
+    <input type="password" id="mkey" placeholder="sk-ant-..."/>
+    <div class="modal-acts">
+      <button class="btn btn-o" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-t" onclick="saveKey()">Save key</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let leads=[],scripts=[],currentCompanyData=null;
+
+window.addEventListener('load',()=>{updateDot();setupUpload();updateROI()});
+
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  document.querySelector(`[data-p="${n}"]`).classList.add('active');
+}
+function showInner(n){
+  document.querySelectorAll('.ipanel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('inner-'+n).classList.add('active');
+  event.target.classList.add('active');
+}
+function toggleNode(el){el.querySelector('.fn-script').classList.toggle('show');el.classList.toggle('open')}
+function toggleNotes(id){const el=document.getElementById(id);el.style.display=el.style.display==='none'?'block':'none'}
+
+function openModal(){document.getElementById('mkey').value=localStorage.getItem('ak')||'';document.getElementById('modal-ov').classList.add('open')}
+function closeModal(){document.getElementById('modal-ov').classList.remove('open')}
+function saveKey(){const v=document.getElementById('mkey').value.trim();if(!v.startsWith('sk-ant-')){alert('Invalid key — must start with sk-ant-');return;}localStorage.setItem('ak',v);closeModal();updateDot()}
+function updateDot(){document.getElementById('api-dot').className='api-dot'+(localStorage.getItem('ak')?' on':'')}
+function getKey(){const k=localStorage.getItem('ak');if(!k){openModal();throw new Error('No API key')}return k}
+
+function updateROI(){
+  const p=+document.getElementById('rp').value,s=+document.getElementById('rs').value,
+    a=+document.getElementById('ra').value,d=+document.getElementById('rd').value,
+    r=+document.getElementById('rr').value,c=+document.getElementById('rc').value;
+  document.getElementById('vp').textContent=p;document.getElementById('vs').textContent=s;
+  document.getElementById('va').textContent=a;document.getElementById('vd').textContent=d;
+  document.getElementById('vr').textContent='$'+r;document.getElementById('vc').textContent='$'+c;
+  const ts=p*s,ta=ts*a,td=ta*d,rev=td*r*1e6,cost=ts*c*1e3,total=rev+cost;
+  document.getElementById('b1').textContent=ts;document.getElementById('b2').textContent=ta;
+  document.getElementById('b3').textContent=td.toLocaleString()+'d';
+  document.getElementById('b4').textContent='$'+fmt(rev);
+  document.getElementById('b5').textContent='$'+fmt(cost);
+  document.getElementById('roi-total').textContent='$'+fmt(total);
+}
+function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return n.toFixed(0)}
+
+// Per-page AI search
+async function runPageSearch(page){
+  const companyInputId={'dashboard':'db-company','news':'nw-company','flow':'fl-company','roi':'roi-company'}[page];
+  const notesInputId={'dashboard':'db-notes','news':'nw-notes','flow':'fl-notes','roi':'roi-notes'}[page];
+  const company=document.getElementById(companyInputId)?.value.trim();
+  const notes=document.getElementById(notesInputId)?.value.trim()||'';
+  if(!company)return;
+  document.getElementById('company-pill').textContent=company;
+  const contentId={'dashboard':'dash-content','news':'news-content','flow':'flow-content','roi':'roi-content'}[page];
+  const container=document.getElementById(contentId);
+  container.innerHTML=`<div class="pulse-wrap"><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div><span>Researching ${company}...</span></div>`;
+  try{
+    const data=await fetchCompanyData(company,notes,page);
+    currentCompanyData=data;
+    renderPage(page,data,container);
+  }catch(err){container.innerHTML=`<div class="card" style="color:var(--red)">Error: ${err.message}. Check your API key.</div>`}
+}
+
+// Main search — updates all tabs
+async function runMainSearch(){
+  const company=document.getElementById('main-search').value.trim();
+  const notes=document.getElementById('main-notes').value.trim();
+  if(!company)return;
+  document.getElementById('company-pill').textContent=company;
+  ['db-company','nw-company','fl-company','roi-company'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=company});
+  const container=document.getElementById('search-res');
+  container.innerHTML=`<div class="pulse-wrap"><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div><span>Researching ${company} — updating all tabs...</span></div>`;
+  try{
+    const data=await fetchCompanyData(company,notes,'all');
+    currentCompanyData=data;
+    renderPage('dashboard',data,document.getElementById('dash-content'));
+    renderPage('news',data,document.getElementById('news-content'));
+    renderPage('flow',data,document.getElementById('flow-content'));
+    renderPage('roi',data,document.getElementById('roi-content'));
+    container.innerHTML=`<div class="fadein"><div class="qbox">All tabs updated for <strong>${company}</strong>. Navigate to Account Brief, News, Call Flow or ROI to see the full picture.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.5rem"><button class="btn btn-t bsm" onclick="showPage('dashboard')">Account Brief →</button><button class="btn btn-o bsm" onclick="showPage('news')">News →</button><button class="btn btn-o bsm" onclick="showPage('flow')">Call Flow →</button><button class="btn btn-o bsm" onclick="showPage('roi')">ROI →</button></div></div>`;
+  }catch(err){container.innerHTML=`<div class="card" style="color:var(--red)">Error: ${err.message}. Check your API key.</div>`}
+}
+
+async function fetchCompanyData(company,notes,scope){
+  const k=getKey();
+  const prompt=`You are an expert SDR researcher for Biorce, selling Aika — an AI-native clinical development platform for pharma, biotech and CROs.
+
+Company to research: "${company}"
+${notes?`\nAdditional context provided:\n${notes}\n`:''}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "name": "full company name",
+  "ticker": "EXCHANGE:TICKER or null",
+  "stage": "Clinical-stage/Commercial/CRO/Large Pharma/etc",
+  "hq": "City, Country",
+  "focus": "one sentence what they do",
+  "funding": "latest funding or market cap info",
+  "whyNow": "2-3 sentences on why NOW is the perfect moment to approach with Aika — be specific to their situation",
+  "openingLine": "one specific, personalised cold call opening line referencing something real and recent about this company",
+  "keyStats": [{"label": "stat label", "value": "value", "highlight": true/false}],
+  "pipeline": [{"drug": "name or code", "phase": "Phase X or Commercial", "indication": "disease", "status": "specific key status note"}],
+  "triggerEvents": [{"date": "Mon Year", "title": "event title", "why": "why this matters for Aika pitch", "icon": "emoji"}],
+  "recentNews": [{"date": "Mon Year", "headline": "headline", "source": "source name", "url": "url if known or null", "relevance": "why this matters for Aika"}],
+  "painPoints": [{"title": "pain point title", "description": "2-3 sentences", "aikaFit": "how Aika solves this specifically"}],
+  "discoveryQuestions": ["question 1", "question 2", "question 3"],
+  "roiInputs": {"programs": 2, "studiesPerProgram": 2, "amendmentsAvoided": 1, "daysPerAmendment": 85, "peakDailyRevenueMillion": 10, "costSavingPerStudyK": 325}
+}
+
+Be accurate. If uncertain, make reasonable inferences based on company type. Make the Aika pitch angle specific and credible.`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status)}
+  const data=await res.json();
+  let txt=data.content[0].text.trim().replace(/```json|```/g,'').trim();
+  return JSON.parse(txt);
+}
+
+function renderPage(page,co,container){
+  container.className='fadein';
+  if(page==='dashboard')container.innerHTML=renderDashboard(co);
+  else if(page==='news')container.innerHTML=renderNews(co);
+  else if(page==='flow')container.innerHTML=renderFlow(co);
+  else if(page==='roi'){renderROIInputs(co);container.innerHTML=renderROIContent(co);}
+}
+
+function renderDashboard(co){
+  const pipeHTML=(co.pipeline||[]).map(p=>`<div class="pipe-item"><div style="min-width:90px"><span class="badge ${p.phase.includes('3')||p.phase.toLowerCase().includes('launch')||p.phase.toLowerCase().includes('commercial')?'bt':p.phase.includes('2')?'bb':'bg'}">${p.phase}</span></div><div><div class="pipe-drug">${p.drug}</div><div class="pipe-detail">${p.indication} · ${p.status}</div></div></div>`).join('');
+  const trigHTML=(co.triggerEvents||[]).map(t=>`<div class="titem"><div class="tdot">${t.icon||'📌'}</div><div><div class="tdate">${t.date}</div><div class="ttitle">${t.title}</div><div class="twhy">${t.why}</div></div></div>`).join('');
+  const painHTML=(co.painPoints||[]).map((p,i)=>`<div class="pcard"><div class="phead"><div class="pnum">${i+1}</div><div class="ptitle">${p.title}</div></div><div class="pdesc">${p.description}</div><div class="paika">→ ${p.aikaFit}</div></div>`).join('');
+  const statsHTML=(co.keyStats||[]).map(s=>`<div class="mc"><div class="mv${s.highlight?' g':''}">${s.value}</div><div class="ml">${s.label}</div></div>`).join('');
+  return`
+    <div style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+        <div style="font-family:var(--fd);font-size:32px">${co.name}</div>
+        ${co.ticker?`<span class="badge bb">${co.ticker}</span>`:''}
+        <span class="badge bg">${co.stage||''}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text3)">${co.hq||''} · ${co.focus||''} ${co.funding?'· '+co.funding:''}</div>
+    </div>
+    ${statsHTML?`<div class="mrow">${statsHTML}</div>`:''}
+    ${co.whyNow?`<div class="qbox" style="margin-bottom:1rem"><strong>Why now:</strong> ${co.whyNow}</div>`:''}
+    ${pipeHTML?`<div class="card" style="margin-bottom:1rem"><div class="sec">Pipeline</div>${pipeHTML}</div>`:''}
+    ${trigHTML?`<div class="card" style="margin-bottom:1rem"><div class="sec">Why contact them now — trigger events</div><div class="tlist">${trigHTML}</div></div>`:''}
+    ${painHTML?`<div class="card"><div class="sec">Pain points → Aika solutions</div><div class="pgrid">${painHTML}</div></div>`:''}`;
+}
+
+function renderNews(co){
+  const newsHTML=(co.recentNews||[]).map(n=>`<div class="news-item"><div class="ndate">${n.date}</div><div><div class="ntitle">${n.url?`<a href="${n.url}" target="_blank">${n.headline} ↗</a>`:n.headline}</div>${n.source?`<div class="nsrc">${n.source}</div>`:''}<div class="nwhy">🎯 ${n.relevance}</div></div></div>`).join('');
+  return`<div><div style="font-family:var(--fd);font-size:22px;margin-bottom:2px">${co.name} — Recent News</div><div style="font-size:13px;color:var(--text3);margin-bottom:1rem">Click headlines to open original articles · annotated with Aika relevance</div></div><div class="card">${newsHTML||'<div style="color:var(--text3);font-size:13px">No recent news found</div>'}</div>`;
+}
+
+function renderFlow(co){
+  const qs=(co.discoveryQuestions||['How is your team currently approaching protocol design?','Have you had protocol amendments in any programs?','How are you managing cross-functional review load?']).map(q=>`• "${q}"`).join('\n');
+  const opener=co.openingLine||`Hi [Name], this is [Teresa] from Biorce. I reached out because I noticed something specific about ${co.name}'s situation. Do you have 90 seconds?`;
+  return`
+    <div style="font-size:13px;color:var(--text3);margin-bottom:1rem">Click any step to reveal the script · personalised for ${co.name}</div>
+    <div class="qbox">Opening line for ${co.name}: <em>"${opener}"</em></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem">
+      <span class="badge bt">57% need an amendment</span><span class="badge bt">45% avoidable</span><span class="badge bt">85 days frozen</span><span class="badge bt">75% faster drafting</span><span class="badge bt">50% fewer amendments</span><span class="badge bt">10x faster review</span><span class="badge bt">$400K saved/study</span>
+    </div>
+    <div class="flow-node" onclick="toggleNode(this)"><div class="fn-label">Step 1 · Opening</div><div class="fn-title">Warm intro</div><div class="fn-script">${opener}</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="bwrap">
+      <div class="flow-node byes" onclick="toggleNode(this)"><div class="blabel y">Yes — they have time</div><div class="fn-title">Move to discovery</div><div class="fn-script">"Thank you. Before I say anything about what we do — can I ask one question? How is your team currently approaching protocol design for your upcoming programs?"</div></div>
+      <div class="flow-node bno" onclick="toggleNode(this)"><div class="blabel n">No — bad time</div><div class="fn-title">Respect it, get the next step</div><div class="fn-script">"Completely understand. When would be a better time this week or next? I'll send a brief email in the meantime."</div></div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)"><div class="fn-label">Step 2 · Discovery</div><div class="fn-title">Ask, don't pitch — personalised for ${co.name}</div><div class="fn-script">${qs}</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)"><div class="fn-label">Step 3 · Bridge</div><div class="fn-title">Connect to Aika — specifically</div><div class="fn-script">"What you're describing is exactly what Aika was built to solve. A top-15 global pharma saw 50% fewer amendments and $250K–400K saved per study within 30 days. The reason this is relevant for ${co.name} specifically is [connect to what they said]."</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="bwrap">
+      <div class="flow-node byes" onclick="toggleNode(this)"><div class="blabel y">Interested</div><div class="fn-title">Book the next step</div><div class="fn-script">"The best next step is a 30-minute call with our scientific team. Would [day/time] work, or is there a better time this week?"</div></div>
+      <div class="flow-node bno" onclick="toggleNode(this)"><div class="blabel n">Objection raised</div><div class="fn-title">Handle and reframe</div><div class="fn-script">"We have scientists" → "Aika makes their decisions more defensible against 260K real protocols."
+"We have a CRO" → "Does your CRO benchmark in real time against 260,000 protocols? Aika is the layer that makes their work defensible."
+"Too busy" → "One amendment costs 85 days. A 2-hour session before you lock the protocol could prevent that."
+"Wrong area" → "We're live in neurology and rare diseases. I can connect you with our scientific team."</div></div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node" onclick="toggleNode(this)"><div class="fn-label">Step 4 · Close</div><div class="fn-title">Always leave with a defined next step</div><div class="fn-script">"Based on what you've shared, the highest-value next step is a focused protocol review with our scientific team. Can I send a calendar invite right now?"</div></div>`;
+}
+
+function renderROIInputs(co){
+  if(!co.roiInputs)return;
+  const r=co.roiInputs;
+  if(r.programs)document.getElementById('rp').value=r.programs;
+  if(r.studiesPerProgram)document.getElementById('rs').value=r.studiesPerProgram;
+  if(r.amendmentsAvoided)document.getElementById('ra').value=r.amendmentsAvoided;
+  if(r.daysPerAmendment)document.getElementById('rd').value=r.daysPerAmendment;
+  if(r.peakDailyRevenueMillion)document.getElementById('rr').value=r.peakDailyRevenueMillion;
+  if(r.costSavingPerStudyK)document.getElementById('rc').value=r.costSavingPerStudyK;
+  updateROI();
+}
+
+function renderROIContent(co){
+  return`<div style="margin-bottom:1rem"><div style="font-size:13px;color:var(--text3)">Pre-filled for <strong>${co.name}</strong> based on AI research. Adjust sliders as needed.</div></div>
+  <div class="roi-grid">
+    <div class="card">
+      <div class="sec">Inputs</div>
+      <div class="roi-in"><div class="roi-lbl">Active clinical programs <span id="vp">${document.getElementById('rp').value}</span></div><input type="range" min="1" max="10" value="${document.getElementById('rp').value}" step="1" oninput="updateROI()" id="rp"/></div>
+      <div class="roi-in"><div class="roi-lbl">Studies per program/year <span id="vs">${document.getElementById('rs').value}</span></div><input type="range" min="1" max="5" value="${document.getElementById('rs').value}" step="1" oninput="updateROI()" id="rs"/></div>
+      <div class="roi-in"><div class="roi-lbl">Amendments avoided/study <span id="va">${document.getElementById('ra').value}</span></div><input type="range" min="0" max="3" value="${document.getElementById('ra').value}" step="1" oninput="updateROI()" id="ra"/></div>
+      <div class="roi-in"><div class="roi-lbl">Days saved per amendment <span id="vd">${document.getElementById('rd').value}</span> days</div><input type="range" min="30" max="180" value="${document.getElementById('rd').value}" step="5" oninput="updateROI()" id="rd"/></div>
+      <div class="roi-in"><div class="roi-lbl">Peak daily revenue ($M) <span id="vr">$${document.getElementById('rr').value}</span>M</div><input type="range" min="1" max="20" value="${document.getElementById('rr').value}" step="1" oninput="updateROI()" id="rr"/></div>
+      <div class="roi-in"><div class="roi-lbl">Operational saving/study ($K) <span id="vc">$${document.getElementById('rc').value}</span>K</div><input type="range" min="100" max="500" value="${document.getElementById('rc').value}" step="25" oninput="updateROI()" id="rc"/></div>
+    </div>
+    <div>
+      <div class="roi-res"><div style="font-size:11px;color:var(--text3);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px">Total Annual Value</div><div class="roi-big" id="roi-total">$0</div><div style="font-size:12px;color:var(--text2)">recovered revenue + operational savings</div></div>
+      <div class="card"><div class="sec">Breakdown</div>
+        <div class="roi-row"><span style="color:var(--text2)">Total studies/year</span><span style="font-family:var(--fm);font-size:13px" id="b1">0</span></div>
+        <div class="roi-row"><span style="color:var(--text2)">Amendments avoided</span><span style="font-family:var(--fm);font-size:13px" id="b2">0</span></div>
+        <div class="roi-row"><span style="color:var(--text2)">Recruitment days recovered</span><span style="font-family:var(--fm);font-size:13px" id="b3">0d</span></div>
+        <div class="roi-row"><span style="color:var(--text2)">Revenue opportunity recovered</span><span style="font-family:var(--fm);font-size:13px" id="b4">$0</span></div>
+        <div class="roi-row"><span style="color:var(--text2)">Direct operational savings</span><span style="font-family:var(--fm);font-size:13px" id="b5">$0</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);padding:8px 4px;line-height:1.6">Revenue recovered = avoided opportunity cost during patent exclusivity. Operational savings proven with top-15 pharma.</div>
+    </div>
+  </div>`;
+}
+
+// SCRIPT GENERATOR
+function setupUpload(){
+  const z=document.getElementById('upzone'),i=document.getElementById('finput');
+  if(!z||!i)return;
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag')});
+  z.addEventListener('dragleave',()=>z.classList.remove('drag'));
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag');handleFile(e.dataTransfer.files[0])});
+  i.addEventListener('change',e=>handleFile(e.target.files[0]));
+}
+function handleFile(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{leads=parseCSV(e.target.result);if(!leads.length){alert('No leads found.');return;}renderLeads();document.getElementById('leads-sec').style.display='block';document.getElementById('upload-sec').style.display='none';document.getElementById('prog-sec').style.display='none';document.getElementById('scripts-sec').style.display='none';};
+  r.readAsText(file);
+}
+function parseCSV(txt){
+  const lines=txt.trim().split('\n');if(lines.length<2)return[];
+  const hds=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
+  return lines.slice(1).map(line=>{
+    const vals=splitLine(line);const obj={};
+    hds.forEach((h,i)=>{obj[h]=(vals[i]||'').trim().replace(/^"|"$/g,'')});
+    const fn=obj['first_name']||obj['first name']||obj['firstname']||'';
+    const ln=obj['last_name']||obj['last name']||obj['lastname']||'';
+    return{name:(fn+' '+ln).trim()||obj['name']||'Unknown',title:obj['title']||obj['job title']||'',company:obj['company_name']||obj['company']||'',linkedin:obj['linkedin']||obj['linkedin_url']||'',email:obj['email']||'',status:'pending'};
+  }).filter(l=>l.name&&l.name!=='Unknown');
+}
+function splitLine(line){const r=[];let cur='',q=false;for(const c of line){if(c==='"'){q=!q;}else if(c===','&&!q){r.push(cur);cur='';}else{cur+=c;}}r.push(cur);return r;}
+function initials(n){return n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)}
+function renderLeads(){
+  document.getElementById('lcount').textContent=`${leads.length} lead${leads.length!==1?'s':''} ready`;
+  document.getElementById('ltbody').innerHTML=leads.map((l,i)=>`<tr><td style="color:var(--text)">${l.name}</td><td>${l.title}</td><td>${l.company}</td><td><span class="badge bp" id="b-${i}">Pending</span></td></tr>`).join('');
+}
+function updBadge(i,s){const b=document.getElementById('b-'+i);if(!b)return;const m={pending:['bp','Pending'],searching:['bs2','Generating...'],done:['bd','Done'],error:['be','Error']};b.className='badge '+m[s][0];b.textContent=m[s][1];}
+async function generateAll(){
+  document.getElementById('gen-btn').disabled=true;scripts=[];document.getElementById('scripts-con').innerHTML='';
+  document.getElementById('prog-sec').style.display='block';document.getElementById('scripts-sec').style.display='block';
+  for(let i=0;i<leads.length;i++){
+    const l=leads[i];
+    document.getElementById('pfill').style.width=Math.round((i/leads.length)*100)+'%';
+    document.getElementById('ptext').textContent=`Processing ${i+1} of ${leads.length}: ${l.name}`;
+    updBadge(i,'searching');
+    try{const sc=await genScript(l);updBadge(i,'done');scripts.push({lead:l,script:sc});renderScript(l,sc);}
+    catch(err){updBadge(i,'error');}
+  }
+  document.getElementById('pfill').style.width='100%';
+  document.getElementById('ptext').textContent=`Done — ${scripts.length} script${scripts.length!==1?'s':''} generated`;
+  document.getElementById('dl-btn').style.display='inline-flex';
+  document.getElementById('gen-btn').disabled=false;
+}
+async function genScript(lead){
+  const d=new Date();d.setMonth(d.getMonth()-3);const cutoff=d.toISOString().split('T')[0];
+  const prompt=`Expert B2B cold call script writer for Biorce selling Aika — AI clinical trial platform. 1M+ trial records, 260K+ protocols. Reduces amendments 60%, prep time 50%, costs 40%+. $52M Series A Feb 2026.
+
+Lead: ${lead.name} · ${lead.title} · ${lead.company} · LinkedIn: ${lead.linkedin||'n/a'}
+
+Think about ${lead.company} — any news after ${cutoff}? Think about ${lead.name} — any recent activity? Write a cold call script: personalised opener (use recent news if found, role-based if not), crisp reason for call, specific pain for their role, Aika solution with a stat, one engaging question. 200-280 words. Conversational. No em dashes. Start with [PERSONALISED] or [ROLE-BASED]. Write only the script.`;
+  const k=getKey();
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status)}
+  const data=await res.json();return data.content[0].text;
+}
+function renderScript(lead,script){
+  const isP=script.startsWith('[PERSONALISED]');
+  const clean=script.replace(/^\[(PERSONALISED|ROLE-BASED)\]\s*/,'');
+  const div=document.createElement('div');div.className='scard';
+  div.innerHTML=`<div class="sc-head"><div class="savtr">${initials(lead.name)}</div><div style="flex:1"><div style="font-weight:500;font-size:14px;color:var(--text)">${lead.name}</div><div style="font-size:12px;color:var(--text3)">${[lead.title,lead.company].filter(Boolean).join(' · ')}</div></div><span class="badge ${isP?'bt':'bg'}">${isP?'Personalised':'Role-based'}</span></div><div class="sc-body">${clean}</div><div class="sc-foot"><button class="btn btn-o bsm" onclick="copyScript(this,${JSON.stringify(clean)})">Copy</button></div>`;
+  document.getElementById('scripts-con').appendChild(div);
+}
+function copyScript(btn,text){navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';setTimeout(()=>{btn.textContent='Copy'},2000)})}
+function downloadAll(){
+  const content=scripts.map(({lead,script})=>`=== ${lead.name} | ${lead.title} | ${lead.company} ===\n\n${script.replace(/^\[(PERSONALISED|ROLE-BASED)\]\s*/,'')}\n\n`).join('---\n\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/plain'}));a.download='biorce_scripts.txt';a.click();
+}
+function resetScripts(){
+  leads=[];scripts=[];document.getElementById('ltbody').innerHTML='';document.getElementById('scripts-con').innerHTML='';
+  document.getElementById('dl-btn').style.display='none';document.getElementById('gen-btn').disabled=false;
+  document.getElementById('finput').value='';document.getElementById('upload-sec').style.display='block';
+  document.getElementById('leads-sec').style.display='none';document.getElementById('prog-sec').style.display='none';document.getElementById('scripts-sec').style.display='none';
+}
+</script>
+</body>
+</html>
